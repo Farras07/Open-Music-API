@@ -13,7 +13,6 @@
         "no-console": "off",
         "linebreak-style": "off",
         "no-underscore-dangle": ["error", { "allowAfterThis": true }],
-        "no-trailing-spaces": ["error", { "skipBlankLines": true }],
-        "import/no-extraneous-dependencies": "disable"
+        "prefer-destructuring": "off"
     }
 }
