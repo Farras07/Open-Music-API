@@ -77,10 +77,10 @@ class AlbumsService {
     }
   }
 
-  async addAlbumCoverUrl(url, id) {
+  async addAlbumCoverUrl(url, path, id) {
     const query = {
-      text: 'UPDATE albums SET "coverUrl" = $1 WHERE id = $2 RETURNING id',
-      values: [url, id],
+      text: 'UPDATE albums SET "coverUrl" = $1 ,"pathCover" = $2 WHERE id = $3 RETURNING id',
+      values: [url, path, id],
     };
 
     const result = await this._pool.query(query);
@@ -142,6 +142,19 @@ class AlbumsService {
     if (!result.rowCount) {
       throw new InvariantError('Gagal Menghapus like album');
     }
+  }
+
+  async getLocalPathCover(id) {
+    const albumQuery = {
+      text: 'SELECT "pathCover" FROM albums WHERE id = $1',
+      values: [id],
+    };
+    const albumResult = await this._pool.query(albumQuery);
+
+    if (!albumResult.rowCount) {
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+    return albumResult.rows[0];
   }
 }
 

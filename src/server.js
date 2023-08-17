@@ -3,6 +3,7 @@ const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const path = require('path');
 const Inert = require('@hapi/inert');
+const config = require('./utils/config');
 
 const albums = require('./api/album');
 const AlbumsService = require('./services/postgres/AlbumsService');
@@ -52,11 +53,11 @@ const init = async () => {
   const authenticationsService = new AuthenticationsService();
   const playlistsService = new PlaylistsService(collaborationsService);
   const playlistsSongsService = new PlaylistsSongsService();
-  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/albums/cover'));
+  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/albums/covers'));
 
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*'],
@@ -74,12 +75,12 @@ const init = async () => {
   ]);
 
   server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.token.access_token_key,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.token.access_token_age,
     },
     validate: (artifacts) => ({
       isValid: true,

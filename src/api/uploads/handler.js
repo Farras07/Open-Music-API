@@ -1,5 +1,5 @@
-// COVER BELUM KEGANTI KALO DIUBAH
 const config = require('../../utils/config');
+
 class UploadsHandler {
   constructor(service, validator) {
     this._uploadsService = service[0];
@@ -11,9 +11,10 @@ class UploadsHandler {
     const { cover } = request.payload;
     const id = request.params.id;
     this._validator.validateImageHeaders(cover.hapi.headers);
-    const filename = await this._uploadsService.writeFile(cover, id, cover.hapi);
-    const url = `http://${process.env.HOST}:${process.env.PORT}/albums/${id}/covers/${filename}`;
-    await this._albumsService.addAlbumCoverUrl(url, id);
+    const { pathCover: oldFile } = await this._albumsService.getLocalPathCover(id);
+    const { filename, path } = await this._uploadsService.writeFile(cover, id, cover.hapi, oldFile);
+    const url = `http://${config.app.host}:${config.app.port}/albums/covers/${filename}`; // Match the URL structure
+    await this._albumsService.addAlbumCoverUrl(url, path, id);
     const response = h.response({
       status: 'success',
       message: 'Sampul berhasil diunggah',

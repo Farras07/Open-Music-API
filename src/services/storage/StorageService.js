@@ -9,15 +9,20 @@ class StorageService {
     }
   }
 
-  writeFile(file, id, meta) {
+  writeFile(file, id, meta, oldFile) {
     const filename = `${id}${meta.filename}`;
     const path = `${this._folder}/${filename}`;
-    const fileStream = fs.createWriteStream(path);
 
     return new Promise((resolve, reject) => {
+      if (fs.existsSync(oldFile)) {
+        fs.unlinkSync(oldFile);
+      }
+
+      const fileStream = fs.createWriteStream(path);
+
       fileStream.on('error', (error) => reject(error));
       file.pipe(fileStream);
-      file.on('end', () => resolve(filename));
+      file.on('end', () => resolve({ filename, path }));
     });
   }
 }
