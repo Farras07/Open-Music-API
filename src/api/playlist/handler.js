@@ -1,6 +1,5 @@
 class PlaylistsHandler {
   constructor(service, validator) {
-    // eslint-disable-next-line prefer-destructuring
     this._playlistService = service[0];
     this._playlistSongsService = service[1];
 
